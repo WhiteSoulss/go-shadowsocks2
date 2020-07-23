@@ -111,3 +111,23 @@ func (k rc4Md5Key) Decrypter(iv []byte) cipher.Stream {
 func RC4MD5(key []byte) (Cipher, error) {
 	return rc4Md5Key(key), nil
 }
+
+
+type chacha20key []byte
+
+ func (k chacha20key) IVSize() int {
+ 	return chacha20.NonceSize
+ }
+ func (k chacha20key) Encrypter(iv []byte) cipher.Stream {
+	ciph, err := chacha20.NewUnauthenticatedCipher(k, iv)
+ 	if err != nil {
+		panic(err) // should never happen
+	}
+	return ciph
+ }
+ func (k chacha20key) Decrypter(iv []byte) cipher.Stream {
+ 	return k.Encrypter(iv)
+ }
+ func ChaCha20(key []byte) (Cipher, error) {
+ 	return chacha20key(key), nil
+ }
